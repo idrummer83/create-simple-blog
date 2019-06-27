@@ -1,12 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ post.title }}</title>
-</head>
-<body>
+{% extends 'posts/index.html' %}
+
+{% block content %}
+
     <h3>{{ post.title }}</h3>
-    <small>{{ post.author }}</small>
-    <p>{{ post.description }}</p>
-</body>
-</html>
+    <small class="badge badge-light">{{ post.author }}</small>
+    <p class="mb-5">{{ post.description }}</p>
+
+    <a href="{{ post.get_edit_url }}">Edit</a>
+    <a href="{{ post.delete_post }}">Delete</a>
+
+    <div>
+        <a class="btn btn-dark" href="{% url 'all_posts' %}">go back to list</a>
+    </div>
+
+
+{% endblock %}

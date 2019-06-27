@@ -15,10 +15,24 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from blog.views import posts_list, post_detail
+from django.conf import settings
+from django.conf.urls.static import static
+
+from blog.views import posts_list, post_detail,\
+    post_create, post_update, post_delete
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('posts/', posts_list),
-    path('posts/<slug>/', post_detail),
+    path('', posts_list, name='all_posts'),
+    path('create/', post_create, name='create'),
+    path('<slug>/update/', post_update),
+    path('<slug>/delete/', post_delete),
+    path('<slug>/', post_detail),
 ]
+
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL,
+                          document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)

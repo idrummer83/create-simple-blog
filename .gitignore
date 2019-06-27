@@ -1,5 +1,7 @@
 # Created by .ignore support plugin (hsz.mobi)
 env
+venv
 **/*.pyc
 **/migrations
 db.sqlite3
+.idea

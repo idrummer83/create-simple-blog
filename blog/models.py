@@ -16,6 +16,15 @@ class Post(models.Model):
     def __str__(self):
         return self.title
 
+    def get_absolute_url(self):
+        return '/{}/'.format(self.slug)
+
+    def get_edit_url(self):
+        return '/{}/update'.format(self.slug)
+
+    def delete_post(self):
+        return '/{}/delete'.format(self.slug)
+
 
 class Author(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
