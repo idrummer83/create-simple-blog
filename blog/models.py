@@ -27,7 +27,7 @@ class Post(models.Model):
 
 
 class Author(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,)
     email = models.EmailField()
     phone = models.IntegerField()
 

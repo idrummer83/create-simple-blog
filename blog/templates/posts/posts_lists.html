@@ -1,11 +1,25 @@
 {% extends 'posts/index.html' %}
 
 {% block content %}
-    
-    <h1>Posts list</h1>
 
     <a href="{% url 'create' %}">Create Post</a>
 
+    <hr>
+
+    <h3>user <strong>{{ logged_user }}</strong> posts</h3>
+
+    <hr>
+    <ul>
+    {% for posts in all_posts2 %}
+        <li>
+            <h2>
+                <a href="{{ posts.get_absolute_url }}">{{ posts.title }}</a>
+            </h2>
+        </li>
+    {% endfor %}
+    </ul>
+    <hr>
+    <h2>All posts</h2>
     <ul class="mt-5">
     {% for posts in all_posts %}
         <li>

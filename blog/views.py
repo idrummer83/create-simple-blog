@@ -1,13 +1,19 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Post, Author
 from .forms import PostModelForm
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
+@login_required
 def posts_list(request):
     all_posts = Post.objects.all()
+    logged_user = Author.objects.filter(user=request.user).first()
     context = {
-        'all_posts': all_posts
+        'all_posts': all_posts,
+        'all_posts2': all_posts.filter(author=logged_user),
     }
     return render(request, 'posts/posts_lists.html', context)
 
@@ -52,8 +58,21 @@ def post_update(request, slug):
     return render(request, 'posts/post_update.html', context)
 
 
-
 def post_delete(request, slug):
     post = get_object_or_404(Post, slug=slug)
     post.delete()
     return redirect('/')
+
+
+def signup(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('/')
+    else:
+        form = UserCreationForm()
+    return render(request, 'registration/signup.html', {
+        'form': form
+    })
+
