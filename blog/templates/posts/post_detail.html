@@ -1,10 +1,19 @@
 {% extends 'posts/index.html' %}
 
 {% block content %}
-
     <h3>{{ post.title }}</h3>
     <small class="badge badge-light">{{ post.author }}</small>
-    <p class="mb-5">{{ post.description }}</p>
+    <p id="post" data-id="{{ post.pk }}" class="mb-5">{{ post.description }}</p>
+    <div>
+        <a href="#" id="like">
+            <span>like</span>
+        </a>
+        <span id="liked">{{ post.like }}</span>
+        <a href="#" id="dislike">
+            <span>dislike</span>
+        </a>
+        <span id="disliked">{{ post.dislike }}</span>
+    </div>
 
     <a href="{{ post.get_edit_url }}">Edit</a>
     <a href="{{ post.delete_post }}">Delete</a>
@@ -13,5 +22,57 @@
         <a class="btn btn-dark" href="{% url 'all_posts' %}">go back to list</a>
     </div>
 
+
+
+    <script type="application/javascript">
+
+  $(document).ready(function(){
+      console.log({{ post.pk }});
+
+      $('#like').on('click', function(e){
+          e.preventDefault();
+          var post_id = $('#post').attr('data-id'),
+              like = 'like';
+
+          data = {
+              post_id: post_id,
+              like: like
+          };
+          $.ajax ({
+              type:"GET",
+              url: "{% url 'user_reaction' %}",
+              dataType: 'json',
+              data: data,
+              success: function(data){
+                  {#console.log(data);#}
+                  $('#liked').html(data.like);
+                  $('#disliked').html(data.dislike);
+              }
+          })
+      });
+
+      $('#dislike').on('click', function(e){
+          e.preventDefault();
+          var post_id = $('#post').attr('data-id'),
+              dislike = 'dislike';
+          data = {
+              post_id: post_id,
+              dislike: dislike
+          };
+          $.ajax ({
+              type:"GET",
+              url: "{% url 'user_reaction' %}",
+              dataType: 'json',
+              data: data,
+              success: function(data){
+                  {#console.log(data);#}
+                  $('#liked').html(data.like);
+                  $('#disliked').html(data.dislike);
+              }
+          })
+      })
+
+  })
+</script>
 
 {% endblock %}

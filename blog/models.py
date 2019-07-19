@@ -12,6 +12,9 @@ class Post(models.Model):
     description = models.TextField()
     image = models.ImageField()
     slug = models.SlugField(unique=True)
+    like = models.SmallIntegerField(default=0)
+    dislike = models.SmallIntegerField(default=0)
+    users_reaction = models.ManyToManyField(User, blank=True, verbose_name='Реакция юзеров', related_name='react')
 
     def __str__(self):
         return self.title

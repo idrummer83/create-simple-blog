@@ -19,7 +19,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 from blog.views import posts_list, post_detail,\
-    post_create, post_update, post_delete, signup
+    post_create, post_update, post_delete, signup,\
+    UserReactionView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -31,6 +32,7 @@ urlpatterns = [
     path('<slug>/update/', post_update),
     path('<slug>/delete/', post_delete),
     path('<slug>/', post_detail),
+    path('reaction', UserReactionView.as_view(), name='user_reaction'),
 ]
 
 

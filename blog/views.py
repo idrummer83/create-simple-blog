@@ -1,9 +1,10 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Post, Author
 from .forms import PostModelForm
-from django.contrib.auth.models import User
+from django.views import View
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 
 # Create your views here.
 
@@ -21,7 +22,7 @@ def posts_list(request):
 def post_detail(request, slug):
     post = get_object_or_404(Post, slug=slug)
     context = {
-        'post': post
+        'post': post,
     }
     return render(request, 'posts/post_detail.html', context)
 
@@ -76,3 +77,28 @@ def signup(request):
         'form': form
     })
 
+
+
+class UserReactionView(View):
+    template_name = 'posts/post_detail.html'
+
+    def get(self, request, *args, **kwargs):
+        post_id = self.request.GET.get('post_id')
+        post = Post.objects.get(id=post_id)
+        like = self.request.GET.get('like')
+        dislike = self.request.GET.get('dislike')
+
+        if like and (request.user not in post.users_reaction.all()):
+            post.like += 1
+            post.users_reaction.add(request.user)
+            post.save()
+        if dislike and (request.user not in post.users_reaction.all()):
+            post.dislike += 1
+            post.users_reaction.add(request.user)
+            post.save()
+        data = {
+            'like': post.like,
+            'dislike': post.dislike
+        }
+
+        return JsonResponse(data)
