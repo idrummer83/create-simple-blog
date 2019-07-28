@@ -6,15 +6,34 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 
+from django.contrib.auth.models import User
 # Create your views here.
+
+from django.contrib.auth.models import User
+from django.contrib.sessions.models import Session
+from django.utils import timezone
+
+def get_current_users():
+    active_sessions = Session.objects.filter(expire_date__gte=timezone.now())
+    print(active_sessions)
+    user_id_list = []
+    for session in active_sessions:
+        data = session.get_decoded()
+        user_id_list.append(data.get('_auth_user_id', None))
+    # Query all logged in users based on id list
+    return User.objects.filter(id__in=user_id_list)
+
 
 @login_required
 def posts_list(request):
     all_posts = Post.objects.all()
     logged_user = Author.objects.filter(user=request.user).first()
+    users = User.objects.all()
+    queryset = get_current_users()
     context = {
         'all_posts': all_posts,
         'all_posts2': all_posts.filter(author=logged_user),
+        'users': users
     }
     return render(request, 'posts/posts_lists.html', context)
 

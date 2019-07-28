@@ -1,15 +1,12 @@
 {% extends 'posts/index.html' %}
 
 {% block content %}
-
+    <div>all users - {{users|length}}</div>
+    <h3>
+        <strong>{{ user.username }}</strong> posts</h3>
+    <hr>
     <a href="{% url 'create' %}">Create Post</a>
-
-    <hr>
-
-    <h3>user <strong>{{ logged_user }}</strong> posts</h3>
-
-    <hr>
-    <ul>
+    <ul class="list-unstyled">
     {% for posts in all_posts2 %}
         <li>
             <h2>
