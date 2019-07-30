@@ -10,7 +10,7 @@ class Post(models.Model):
     author = models.ForeignKey('Author', on_delete=models.CASCADE)
     title = models.CharField(max_length=250)
     description = models.TextField()
-    image = models.ImageField()
+    image = models.ImageField(upload_to='images', null=True)
     slug = models.SlugField(unique=True)
     like = models.SmallIntegerField(default=0)
     dislike = models.SmallIntegerField(default=0)

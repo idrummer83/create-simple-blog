@@ -23,6 +23,7 @@ from blog.views import posts_list, post_detail,\
     UserReactionView
 
 urlpatterns = [
+    path('chat/', include('chat.urls', namespace='chat')),
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
     path('signup/', signup, name='signup'),

@@ -15,7 +15,6 @@ from django.utils import timezone
 
 def get_current_users():
     active_sessions = Session.objects.filter(expire_date__gte=timezone.now())
-    print(active_sessions)
     user_id_list = []
     for session in active_sessions:
         data = session.get_decoded()
@@ -29,7 +28,6 @@ def posts_list(request):
     all_posts = Post.objects.all()
     logged_user = Author.objects.filter(user=request.user).first()
     users = User.objects.all()
-    queryset = get_current_users()
     context = {
         'all_posts': all_posts,
         'all_posts2': all_posts.filter(author=logged_user),
