@@ -6,15 +6,20 @@ from django.conf import settings
 
 User = settings.AUTH_USER_MODEL
 
+class Author(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,)
+    email = models.EmailField()
+    phone = models.IntegerField()
+
+    def __str__(self):
+        return self.user.username
+
+
 class Post(models.Model):
-    author = models.ForeignKey('Author', on_delete=models.CASCADE)
+    author = models.ForeignKey(Author, on_delete=models.CASCADE, verbose_name='post_author')
     title = models.CharField(max_length=250)
     description = models.TextField()
-    image = models.ImageField(upload_to='images', null=True)
     slug = models.SlugField(unique=True)
-    like = models.SmallIntegerField(default=0)
-    dislike = models.SmallIntegerField(default=0)
-    users_reaction = models.ManyToManyField(User, blank=True, verbose_name='Реакция юзеров', related_name='react')
 
     def __str__(self):
         return self.title
@@ -29,10 +34,10 @@ class Post(models.Model):
         return '/{}/delete'.format(self.slug)
 
 
-class Author(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,)
-    email = models.EmailField()
-    phone = models.IntegerField()
+class PostImage(models.Model):
+    author = models.ForeignKey(Author, on_delete=models.CASCADE, verbose_name='img_author')
+    title = models.CharField(max_length=50, blank=True)
+    image = models.ImageField(upload_to='images/', )
 
     def __str__(self):
-        return self.user.username
+        return self.title

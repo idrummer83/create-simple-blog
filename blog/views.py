@@ -1,12 +1,11 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Post, Author
-from .forms import PostModelForm
-from django.views import View
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 
-from django.contrib.auth.models import User
+from .models import Post, PostImage, Author
+from .forms import PostModelForm, PostModelFormImage
+
 # Create your views here.
 
 from django.contrib.auth.models import User
@@ -27,11 +26,16 @@ def get_current_users():
 def posts_list(request):
     all_posts = Post.objects.all()
     logged_user = Author.objects.filter(user=request.user).first()
-    users = User.objects.all()
+    all_images = PostImage.objects.filter(author=logged_user)
+    image_limit = PostImage.objects.filter(author=logged_user)
+    text = ''
+    if image_limit.count() >= 7:
+        text = 'limit of images'
     context = {
         'all_posts': all_posts,
         'all_posts2': all_posts.filter(author=logged_user),
-        'users': users
+        'text': text,
+        'all_images': all_images
     }
     return render(request, 'posts/posts_lists.html', context)
 
@@ -50,16 +54,32 @@ def post_create(request):
         email=request.user.email,
         phone=8989898989
     )
-    form = PostModelForm(request.POST or None, request.FILES or None)
-    if form.is_valid():
-        form.instance.author = author
-        form.save()
+    form1 = PostModelForm(request.POST or None, prefix="form1")
+    if form1.is_valid():
+        form1.instance.author = author
+        form1.save()
         return redirect('/')
 
     context = {
-        'form': form
+        'form': form1,
     }
     return render(request, 'posts/posts_create.html', context)
+
+
+def img_create(request):
+    author, created = Author.objects.get_or_create(
+        user=request.user,
+    )
+    form2 = PostModelFormImage(request.POST or None, request.FILES or None)
+    if form2.is_valid():
+        form2.instance.author = author
+        form2.save()
+        return redirect('/')
+
+    context = {
+        'form2': form2,
+    }
+    return render(request, 'posts/img_create.html', context)
 
 
 def post_update(request, slug):
@@ -93,29 +113,3 @@ def signup(request):
     return render(request, 'registration/signup.html', {
         'form': form
     })
-
-
-
-class UserReactionView(View):
-    template_name = 'posts/post_detail.html'
-
-    def get(self, request, *args, **kwargs):
-        post_id = self.request.GET.get('post_id')
-        post = Post.objects.get(id=post_id)
-        like = self.request.GET.get('like')
-        dislike = self.request.GET.get('dislike')
-
-        if like and (request.user not in post.users_reaction.all()):
-            post.like += 1
-            post.users_reaction.add(request.user)
-            post.save()
-        if dislike and (request.user not in post.users_reaction.all()):
-            post.dislike += 1
-            post.users_reaction.add(request.user)
-            post.save()
-        data = {
-            'like': post.like,
-            'dislike': post.dislike
-        }
-
-        return JsonResponse(data)

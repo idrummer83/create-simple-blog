@@ -4,10 +4,12 @@
 
     <a href="/">back to list</a>
 
-    <h6>Add text</h6>
+    {{ q }}
+
+    <h6>Add picture</h6>
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ form.as_p }}
+        {{ form2.as_p }}
         <input type="submit" name="submit">
     </form>
 

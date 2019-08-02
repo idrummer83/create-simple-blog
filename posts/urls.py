@@ -19,8 +19,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 from blog.views import posts_list, post_detail,\
-    post_create, post_update, post_delete, signup,\
-    UserReactionView
+    post_create, img_create, post_update, post_delete, signup
 
 urlpatterns = [
     path('chat/', include('chat.urls', namespace='chat')),
@@ -30,10 +29,10 @@ urlpatterns = [
 
     path('', posts_list, name='all_posts'),
     path('create/', post_create, name='create'),
+    path('create_img/', img_create, name='img_create'),
     path('<slug>/update/', post_update),
     path('<slug>/delete/', post_delete),
     path('<slug>/', post_detail),
-    path('reaction', UserReactionView.as_view(), name='user_reaction'),
 ]
 
 
